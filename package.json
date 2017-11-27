@@ -2,7 +2,7 @@
   "name": "my-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://172.20.13.133:8866",
+  "proxy": "http://123.103.9.210:80",
   "dependencies": {
     "antd": "^2.12.2",
     "autoprefixer": "7.1.1",
