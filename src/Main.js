@@ -3,6 +3,7 @@ import './less/main.less';
 import bqFetch from 'root/utils/bqFetch';
 import {BQ_SELF} from 'root/config/constant';
 import back from './images/back.png';
+import InfoModal from './InfoModal';
 import {Icon} from 'antd';
 //引入 ECharts 主模块
 import echarts from 'echarts/lib/echarts';
@@ -17,17 +18,14 @@ import  'echarts/lib/chart/scatter';
 // 引入提示框和标题组件
 import 'echarts/lib/component/legend';
 import 'echarts/lib/component/title';
-import 'echarts/lib/component/tooltip'
+import 'echarts/lib/component/tooltip';
+import download from "downloadjs";
 var sectionStyle = {
   backgroundImage: `url(${back})`,
   backgroundSize:'100% 100%'
 };
 
-var geoCoordMap = window.geoCoordMap;
 
-var kongtiaoData = window.kongtiaoData;
-
-var guoluData=window.guoluData;
 
 var ifExitInData = function(name){
 	let exit = false;
@@ -42,41 +40,6 @@ var ifExitInData = function(name){
 
 
 
-var getGeoCoordMap = function(){
-	let result = {};
-	for(let i=0;i<resultEntry3.length;i++){
-		result[resultEntry3[i].SBBH] = [resultEntry3[i].jd,resultEntry3[i].wd];
-	}
-	return result;
-}
-
-var getKongtiaoMapData = function(){
-	let result = [];
-	for(let index=0;index<resultEntry3.length;index++){
-		if(resultEntry3[index].CODE ==='1001'){
-			result.push({
-				name:resultEntry3[index].SBBH,
-				value:resultEntry3[index].FGSB?resultEntry3[index].FGSB:''
-			});
-		}
-		
-	}
-	return result;
-}
-
-var getGuoluMapData = function(){
-	let result = [];
-	for(let index=0;index<resultEntry3.length;index++){
-		if(resultEntry3[index].CODE ==='1002'){
-			result.push({
-				name:resultEntry3[index].SBBH,
-				value:resultEntry3[index].FGSB
-			});
-		}
-		
-	}
-	return result;
-}
 
 
 
@@ -106,13 +69,7 @@ var getLegendData = function(){
   return legendData;
 }
 
-var BQDataTokenID = window.BQDataTokenID;
-const globalDsId1 = window.globalDsId1;
-const globalDsId2 = window.globalDsId2;
-const globalDsId3 = window.globalDsId3;
-const allMechine = window.allMechine;
-const mechineBackJson = window.mechineBackJson;
-const mechineRepireJson = window.mechineRepireJson;
+
 const cityArr = [
 	{
 		name:'安徽',
@@ -366,132 +323,9 @@ function getArrIndex(arr,str){
 	}
 	return index;
 }
-var resultEntry1 = window.resultEntry1;
-var resultEntry2 = window.resultEntry2;
-
-var resultEntry3 = window.resultEntry3;
-
-
-//设备维保情况解析构值
-var getResultEntry1=function(){
-	resultEntry1.splice(0,resultEntry1.length);
-	for(let index=0;index<mechineRepireJson.length;index++){
-		let result = {};
-			[result.zxqdhtrq0,//最新签订合同年月
-			result.zzgc,//制造工厂
-			result.fgsbbh,//分公司办编号
-			result.fgsb,//分公司办
-			result.sblb,//设备类别
-			result.sbbh,//设备编号
-			result.sbxh,//设备型号
-			result.fhrq,//发货日期
-			result.dsysrq,//调试验收日期
-			result.sbqq,//三包讫期
-			result.yh,//用户
-			result.dz,//设备地址
-			result.zxhtbh,//最新合同编号
-			result.wblx,//维保类型
-			result.bxjzrq,//保修截止日期
-			result.zxqdhtrq,//最新签订合同
-			result.glsl,//锅炉数量
-			result.kdsl,//空调数量
-			result.zxqdhtny,//数量
-			] = mechineRepireJson[index];
-			resultEntry1.push(result);
-	}
-	
-
-}
-//获得设备回访信息
-var getResultEntry2 = function(){
-	resultEntry2.splice(0,resultEntry2.length);
-	for(let index=0;index<mechineBackJson.length;index++){
-		let result = {};
-		[result.hfsl,//回访数量
-			result.nd,//年月
-			result.sbw,//三包外
-			result.sbn,//三包内
-			result.djh,//单据号
-			result.hfbz,//回访标准
-			result.sblx,//sblx
-			result.jylx,//交易类型
-			result.hfrq,//回访日期
-			result.hfr,//回访人
-			result.sbyh,//设备用户
-			result.sbdz,//设备地址
-			result.sblb,//设备类别
-			result.sbbm,//设备编码
-			result.sbxh,//设备型号
-			result.sbztbm,//设备状态编码
-			result.sbztmc,//设备状态名称
-			result.zzgc,//制造工厂
-			result.FGSB,//FGSB
-			result.jd,//经度
-			result.wd//纬度
-			] = mechineBackJson[index];
-			resultEntry2.push(result);
-	}
-}
-
-
-//获得全部设备
-var getResultEntry3 = function(){
-	resultEntry3.splice(0,resultEntry3.length);
-	for(let index=0;index<allMechine.length;index++){
-		let result = {};
-		[	result.sbzt1,//设备状态1
-			result.sbzt0,//设备状态2
-			result.sbsl,//设备数量
-			result.HTKH,//HTKH
-			result.YH,//用户
-			result.DQYH,//DQYH
-			result.WZ,//WZ
-			result.DZ,//地址
-			result.jd,//经度
-			result.wd,//纬度
-			result.CODE,//CODE
-			result.NAME_,//制造公司
-			result.FGSBID,//FGSBID
-			result.FGSB,//分公司
-			result.SBBH,//设备编码
-			result.SBXH,//设备型号
-			result.FHRQ,//发货日期
-			result.SBZT//设备状态
-			] = allMechine[index];
-			resultEntry3.push(result);
-	}
-}
 
 //获取设备类型数据
-var getMechineType=function(province){
-	let guoluNum = 0;
-	let kongtiaoNum = 0;
-	for(let i=0;i<resultEntry3.length;i++){
-		if(resultEntry3[i].CODE==='1001'){
-			if(province!==''&&province!==null){
-				if(resultEntry3[i].WZ){
-					if(resultEntry3[i].WZ.indexOf(province)>=0){
-					kongtiaoNum++;
-					}
-				}
-				
-			}else{
-				kongtiaoNum++;
-			}
-			
-		}else if(resultEntry3[i].CODE==='1002'){
-			if(province!==''&&province!==null){
-				if(resultEntry3[i].WZ){
-					if(resultEntry3[i].WZ.indexOf(province)>=0){
-						guoluNum++;
-					}
-				}
-			}else{
-				guoluNum++;
-			}
-			
-		}
-	}
+var getMechineType=function(kongtiaoNum,guoluNum){
 
 	let result = {
 		 pieLegend : ['空调','锅炉'],
@@ -518,49 +352,7 @@ var getMechineType=function(province){
 
 
 //获得设备状态
-var getMechineState=function(province){
-	let sbw = 0;
-	let yys = 0;
-	let jfz = 0;
-	for(let i=0;i<resultEntry3.length;i++){
-		if(resultEntry3[i].sbzt0==='三包外'){
-			if(province!==''&&province!==null){
-				if(resultEntry3[i].WZ){
-					if(resultEntry3[i].WZ.indexOf(province)>=0){
-					sbw++;
-				}
-				}
-				
-			}else{
-				sbw++;
-			}
-			
-		}else if(resultEntry3[i].sbzt0==='已验收'){
-			if(province!==''&&province!==null){
-				if(resultEntry3[i].WZ){
-					if(resultEntry3[i].WZ.indexOf(province)>=0){
-						yys++;
-					}
-				}
-			}else{
-				yys++;
-			}
-			
-		}else if(resultEntry3[i].sbzt0==='交付中'){
-			if(province!==''&&province!==null){
-				if(resultEntry3[i].WZ){
-					if(resultEntry3[i].WZ.indexOf(province)>=0){
-					jfz++;
-				}
-				}
-				
-			}else{
-				jfz++;
-			}
-			
-		}
-	}
-
+var getMechineState=function(sbw,yys,jfz){
 	let result = {
 		 pieLegend : ['三包外','已验收','交付中'],
 		 pieData : [
@@ -593,122 +385,10 @@ var getMechineState=function(province){
 }
 
 
-//获得交付进度数
-var getJiaofu=function(province){
-	let result = [0,0,0,0,0,0];
-	let state = ['01厂内交付','02出厂到货','03调试巡查','04安装确认','05调试申请','06调试完成'];
-	for(let i=0;i<resultEntry3.length;i++){
-
-		for(let j=0;j<state.length;j++){
-			if(resultEntry3[i].sbzt1===state[j]){
-			if(province!==''&&province!==null){
-				if(resultEntry3[i].WZ){
-					if(resultEntry3[i].WZ.indexOf(province)>=0){
-						result[j]++;
-					}	
-				}
-				
-			}else{
-				result[j]++;
-			}
-			
-		}
-		}
-		
-	}
-	return result;
-}
-
-//获得设备回访动态信息
-var getMechineBack=function(province){
-	let resultW = [0,0,0,0,0,0,0,0,0,];
-	let resultN = [0,0,0,0,0,0,0,0,0,];
-	let month = ['2017-03','2017-04','2017-05','2017-06','2017-07','2017-08','2017-09','2017-10','2017-11'];
-	for(let i=0;i<resultEntry2.length;i++){
-		if(province!==''&&province!==null){
-			if(resultEntry2[i].FGSB){	
-				if(resultEntry2[i].FGSB.indexOf(province)>=0){
-					for(let j=0;j<month.length;j++){
-						if(resultEntry2[i].nd===month[j]){
-							if(resultEntry2[i].sbztmc.indexOf('三包内')>=0){
-								resultN[j]++;
-							}
-							if(resultEntry2[i].sbztmc.indexOf('三包外')>=0){
-								resultW[j]++;
-							}
-						}
-					}
-				}
-			}
-		}else{
-			for(var jIndex=0;jIndex<month.length;jIndex++){
-						if(resultEntry2[i].nd===month[jIndex]){
-							if(resultEntry2[i].sbztmc.indexOf('三包内')>=0){
-								resultN[jIndex]++;
-							}
-							if(resultEntry2[i].sbztmc.indexOf('三包外')>=0){
-								resultW[jIndex]++;
-							}
-							
-						}
-					}
-		}
-		
-
-	}
-	return {
-		resultN:resultN,
-		resultW:resultW
-	}
-}
-//获得设备分布分析
-var getMechineSplit=function(){
-	let result = {};
-	for(let i=0;i<resultEntry3.length;i++){
-		if(result[resultEntry3[i].FGSB]){
-			result[resultEntry3[i].FGSB]++;
-		}else{
-			result[resultEntry3[i].FGSB] = 1;
-		}
-	}
-	// var sortedArr = result.sort((a, b) => a < b ? 1 : -1);
-}
-
-
 //获得设备维保动态分析
-var getMechineRepire=function(province){
+var getMechineRepire=function(result){
 	let resultFu=[0,0,0,0,0,0,0,0,0,0,0];
-	let result=[0,0,0,0,0,0,0,0,0,0,0];
 	let time=['2017-01','2017-02','2017-03','2017-04','2017-05','2017-06','2017-07','2017-08','2017-09','2017-10','2017-全部'];
-	for(let i=0;i<resultEntry1.length;i++){
-		if(province!==''&&province!==null){
-			if(resultEntry1[i].fgsb){
-				if(resultEntry1[i].fgsb.indexOf(province)>=0){
-					for(let j=0;j<time.length;j++){
-						if(resultEntry1[i].zxqdhtrq0){
-							if(resultEntry1[i].zxqdhtrq0.indexOf(time[j])>=0){
-								result[j]++;
-								result[10]++;
-							}
-						}
-						
-					}
-				}
-			}
-		}else{
-			for(let j=0;j<time.length;j++){
-				if(resultEntry1[i].zxqdhtrq0){
-					if(resultEntry1[i].zxqdhtrq0.indexOf(time[j])>=0){
-						result[j]++;
-						result[10]++;
-					}
-				}
-				
-			}
-		}
-
-		
-	}
 	resultFu=[0,result[0],result[0]+result[1],result[0]+result[1]+result[2],result[0]+result[1]+result[2]+result[3],result[0]+result[1]+result[2]+result[3]+result[4],result[0]+result[1]+result[2]+result[3]+result[4]+result[5],result[0]+result[1]+result[2]+result[3]+result[4]+result[5]+result[6],result[0]+result[1]+result[2]+result[3]+result[4]+result[5]+result[6]+result[7],result[0]+result[1]+result[2]+result[3]+result[4]+result[5]+result[6]+result[7]+result[8],0]
 	return {
 		result:result,
@@ -719,107 +399,127 @@ var getMechineRepire=function(province){
 
 //获得设备数和用户数
 var getTotalNum=function(){
-	let mechineTotal = resultEntry3.length;
-	
-	let userNameArr = [];
-	for(let i=0;i<resultEntry3.length;i++){
-		if(getArrIndex(userNameArr,resultEntry3[i].YH)===(-1)){
-			userNameArr.push(resultEntry3[i].YH);
-		}
-	}
 	return {
-		mechineTotal:mechineTotal,
-		userTotal:userNameArr.length
+		mechineTotal:20796,
+		userTotal:10324
 	}
 
 }
 class Main extends React.Component{
 	constructor(props){
 		super(props);
-		if(BQDataTokenID!==''){
-			BQDataTokenID = GetQueryString('BQDataTokenID');	
-		}
 		
-		// console.log(BQDataTokenID);
-		// console.log(globalDsId1);
-		// console.log(globalDsId2);
-		// console.log(globalDsId3);
+	
 		this.state=({
-			selectCity:'',
+			selectCity:'home',
 			left:0,
 			top:0,
 			curMechine:{},
 			opacity:0,
-			loading:false
+			loading:false,
+			curData:[],
+			visible:false
 		})
 	}
 
-	loadCityData=(city)=>{
-		let curpieData1 = getMechineType(city);
-        pieLegend = curpieData1.pieLegend;
-        pieData = curpieData1.pieData;
+	fetchChartData=(city)=>{
+		let url = '/getInfo/'+city;
+		return bqFetch(url, {
+        	 method: "GET",
+        	 headers: {
+        		    'Content-Type': 'application/json'
+	 		}
+		})
+	}
 
-        let pieData11 = getMechineState(city);
-        pieLegend1 = pieData11.pieLegend;
-        pieData1 = pieData11.pieData;
-        if(!(pieData1[0].value ===0&& pieData1[1].value ===0&&pieData1[2].value ===0)){
-        	pieData1Persent[0] = (parseFloat((parseFloat(pieData1[0].value/(pieData1[0].value+pieData1[1].value+pieData1[2].value))).toFixed(2))*100).toFixed(0);
-			pieData1Persent[1] = (parseFloat((parseFloat(pieData1[1].value/(pieData1[0].value+pieData1[1].value+pieData1[2].value))).toFixed(2))*100).toFixed(0);
-			pieData1Persent[2] = 100 - parseFloat(pieData1Persent[0]) - parseFloat(pieData1Persent[1]);
-        }else{
-        	pieData1Persent = [0,0,0];
-        }
+	fetchResultData=(sbbh)=>{
+		let url = '/getMechine/'+sbbh;
+		return bqFetch(url, {
+        	 method: "GET",
+        	 headers: {
+        		    'Content-Type': 'application/json'
+	 		}
+		})
+	}
+
+
+	fetchMapData=(city)=>{
+		let url = '/getGuoluAndKongtiao/'+city;
+		return bqFetch(url, {
+        	 method: "GET",
+        	 headers: {
+        		    'Content-Type': 'application/json'
+	 		}
+		})
+	}
+
+
+	loadCityData=(city,loadChart)=>{
+
+		let self = this;
+		this.fetchChartData(city).then(response=>{
+			if(response.ok){
+				response.json().then(json=>{
+					let curpieData1 = getMechineType(json.kongtiaoNum,json.guoluNum);
+			        pieLegend = curpieData1.pieLegend;
+			        pieData = curpieData1.pieData;
+
+
+			        let pieData11 = getMechineState(json.sbw,json.yys,json.jfz);
+			        pieLegend1 = pieData11.pieLegend;
+			        pieData1 = pieData11.pieData;
+			        if(!(pieData1[0].value ===0&& pieData1[1].value ===0&&pieData1[2].value ===0)){
+			        	pieData1Persent[0] = (parseFloat((parseFloat(pieData1[0].value/(pieData1[0].value+pieData1[1].value+pieData1[2].value))).toFixed(2))*100).toFixed(0);
+						pieData1Persent[1] = (parseFloat((parseFloat(pieData1[1].value/(pieData1[0].value+pieData1[1].value+pieData1[2].value))).toFixed(2))*100).toFixed(0);
+						pieData1Persent[2] = 100 - parseFloat(pieData1Persent[0]) - parseFloat(pieData1Persent[1]);
+			        }else{
+			        	pieData1Persent = [0,0,0];
+			        }
+
+			        jiaofuData = json.jiaofuArr;
+
+
+
+			        resultW = json.resultW;
+			        resultN = json.resultN;
+
+
+			      	let mechineRepireData = getMechineRepire(json.mechineRepire);
+			        repireTime=mechineRepireData.time;
+			        repireDataFu=mechineRepireData.resultFu;
+					repireData=mechineRepireData.result;
+
+					self.loadOption();
+					self.setState({
+						selectCity:city
+					})
+				})
+			}
+		})
+		
+
         
+        this.fetchMapData(city).then(response=>{
+        	if(response.ok){
+        		response.json().then(json=>{
+        			kData = json.kongtiao;
+        			gData = json.guolu;
+        			self.loadChart(loadChart);
 
-        let jiaofuRealData = getJiaofu(city);
-        jiaofuData = jiaofuRealData;
+        		})
+        	}
+        })
 
 
-        let mechineBackData = getMechineBack(city);
-        resultW = mechineBackData.resultW;
-        resultN = mechineBackData.resultN;
+
+  
 
 
-        let mechineRepireData = getMechineRepire(city);
-        repireTime=mechineRepireData.time;
-        repireDataFu=mechineRepireData.resultFu;
-		repireData=mechineRepireData.result;
-
-		kData = this.getKongtiaoData(city);
-		gData = this.getGuoluData(city);
       
 	}
 	
-    getDsData=(BQDataTokenID,dsId)=>{
-        let url=BQ_SELF+'/ds/web/data/export4out/'+BQDataTokenID+'/'+dsId;
-            return bqFetch(url, {
-                 method: "GET",
-                 async:false,
-                 headers: {
-                        'Content-Type': 'application/json'
-                 }
-        })
-    }
+
 	
-	componentWillMount(){
-	    // getResultEntry1();
-     //    getResultEntry2();
-     //    getResultEntry3();
-
-        // geoCoordMap =  getGeoCoordMap();
-        // kongtiaoData = getKongtiaoMapData();
-        // guoluData = getGuoluMapData();
-        // console.log(JSON.stringify(guoluData));
-        
-        // console.log(JSON.stringify(resultEntry1));
-        // console.log(JSON.stringify(resultEntry2));
-        // console.log(JSON.stringify(resultEntry3));
-        this.loadCityData(this.state.selectCity);
-        
-
-
-	}
-
 
 	handleScroll=()=>{
 		this.setState({
@@ -1338,54 +1038,6 @@ class Main extends React.Component{
 		return option;                
 	}
 
-	getKongtiaoData=(city)=>{
-		let result=[];
-		for(let i=0;i<kongtiaoData.length;i++){
-			if(city!==''&&city!==null){
-				if(kongtiaoData[i].value){
-					try{
-					if(kongtiaoData[i].value.indexOf(city)>=0||city.indexOf(kongtiaoData[i].value)>=0){
-						result.push({
-							name:kongtiaoData[i].name,
-							value:geoCoordMap[kongtiaoData[i].name]
-						});
-					}}catch(e){}
-				}
-				
-			}else{
-				result.push({
-					name:kongtiaoData[i].name,
-					value:geoCoordMap[kongtiaoData[i].name]
-				});
-			}
-			
-		}
-		return result;
-	}
-
-	getGuoluData=(city)=>{
-		let result=[];
-		for(let i=0;i<guoluData.length;i++){
-			if(city!==''&&city!==null){
-				if(guoluData[i].value.indexOf(city)>=0||city.indexOf(guoluData[i].value)>=0){
-					result.push({
-					name:guoluData[i].name,
-					value:geoCoordMap[guoluData[i].name]
-				});
-				}
-			}else{
-				result.push({
-					name:guoluData[i].name,
-					value:geoCoordMap[guoluData[i].name]
-				});
-			}
-			result.push({
-				name:guoluData[i].name,
-				value:geoCoordMap[guoluData[i].name]
-			});
-		}
-		return result;
-	}
 
 
 	getMapChartOption=()=>{
@@ -1505,16 +1157,6 @@ class Main extends React.Component{
 	}
 
 
-	getMapDataByBh=(name)=>{
-		let result = {};
-		for(let i=0;i<resultEntry3.length;i++){
-			if(resultEntry3[i].SBBH === name){
-				result = resultEntry3[i];
-				return result;
-			}
-		}
-		return false;
-	}
 
 
 
@@ -1528,10 +1170,11 @@ class Main extends React.Component{
         mechineRepireChart = echarts.init(document.getElementById('mechineRepireChart'));
         mapChart = echarts.init(document.getElementById('mapChart'));
 
-
-        this.loadOption();
-        this.loadChart('/mapjson/china.json');
+		this.loadCityData(this.state.selectCity,'/mapjson/china.json');
+        
+        
         let self = this;
+
         mapChart.on('click', function (params,e) {
 
 			//阻止浏览器冒泡
@@ -1540,53 +1183,50 @@ class Main extends React.Component{
 		    let city = params.name;
 		    let value = getJsonName(city);
 		    if(value){
-		    	self.loadCityData(city);
-		    	self.loadChart('/mapjson/'+value);
-		    	
-		    	self.loadOption();
+		    	self.loadCityData(city,'/mapjson/'+value);
+
 			    self.setState({
 			    	selectCity:city,
 			    	opacity:0
 			    })
 			    
 		    }else{
-		    	
-		    	let left = params.event.offsetX+150;
-		    	let top = params.event.offsetY+200;
-		    	if(top>=470){
-		    		top=470;
+		    	if(/^[\u4e00-\u9fa5]/.test(city)){
+
+		    	}else{
+		    		let left = params.event.offsetX+150;
+			    	let top = params.event.offsetY+200;
+			    	if(top>=470){
+			    		top=470;
+			    	}
+			    	self.setState({
+			    		
+			    		left:left,
+				    	top:top,
+				    	opacity:0.95,
+				    	loading:true,
+			    	})
+
+			    	self.fetchResultData(city).then(response=>{
+			    		if(response.ok){
+			    			response.json().then(json=>{
+			    				if(json.resultentry3id!==-1){
+			    					self.setState({
+			    						curMechine:json,
+			    						loading:false
+			    					})
+			    				}else{
+			    					self.setState({
+			    						loading:false,
+			    						opacity:0,
+			    					})
+			    				}
+			    			})
+			    		}
+			    	})
 		    	}
-		    	self.setState({
-		    		
-		    		left:left,
-			    	top:top,
-			    	opacity:0.95,
-			    	loading:true,
-		    	})
-		    	fetch('/mapjson/data.json')
-			        .then((res)=> res.json())
-			        .then((json)=>{
-		            	if(!ifExitInData(city)){
-						    let curMap = self.getMapDataByBh(params.name);
-						    if(curMap){
-								self.setState({
-							    	curMechine:curMap,
-							    	loading:false
-							    })
-						    }else{
-						    	self.setState({
-						    		opacity:0,
-						    		loading:false
-						    	})
-						    }
-						    
-					    }else{
-					    	self.setState({
-					    		opacity:0,
-					    		loading:false
-					    	})
-					    }
-		        	});
+		    	
+		    	
 		    	
 		    }
 		    
@@ -1620,25 +1260,23 @@ class Main extends React.Component{
 	        .then((json)=>{
             	echarts.registerMap('chongqing', json);
 			    mapChart.setOption(this.getMapChartOption());
-			    
         	});
 	}
 
 	goBack=()=>{
-		this.loadCityData('');
-		
-		
-		this.loadOption();
-		this.loadChart('/mapjson/china.json');
-		this.setState({
-			selectCity:''
-		})
+		this.loadCityData('home','/mapjson/china.json');
 		
 	}
 	
 	closeInfo=()=>{
 		this.setState({
 			opacity:0
+		})
+	}
+
+	closeModal=()=>{
+		this.setState({
+			visible:false
 		})
 	}
 
@@ -1654,13 +1292,16 @@ class Main extends React.Component{
 			 	<div className='chartDiv mechineState'>
 			 		<div className='mechineStateDiv' id='mechineState'></div>
 			 		<table className='tableHeader'>
+			 			<tbody>
 						<tr><th className='th1'></th><th className='th2'>数量</th><th className='th3'>占比</th></tr>
+			 			</tbody>
 			 		</table>
 			 		<table className='stateTable'>
-						
+						<tbody>
 						<tr><td></td><td style={{'color':'#77fcfe','width':'50px','lineHeight':'27px'}}>{pieData1[0].value}</td><td>{pieData1Persent[0]+'%'}</td></tr>
 						<tr><td></td><td style={{'color':'#fb5959'}}>{pieData1[1].value}</td><td>{pieData1Persent[1]+'%'}</td></tr>
 						<tr><td></td><td style={{'color':'#f5a623'}}>{pieData1[2].value}</td><td>{pieData1Persent[2]+'%'}</td></tr>
+			 			</tbody>
 			 		</table>
 			 	</div>
 			 	<div className='chartDiv jiaofu'>
@@ -1687,34 +1328,34 @@ class Main extends React.Component{
 
 				<div className='mapDiv'>
 					<div className='mapChartDiv' id='mapChart'></div>
-					<div className='backChina' onClick={this.goBack} style={{'display':this.state.selectCity===''?'none':'inline-block'}}><Icon type="arrow-left" /></div>
+					<div className='backChina' onClick={this.goBack} style={{'display':this.state.selectCity==='home'?'none':'inline-block'}}><Icon type="arrow-left" /></div>
 				</div>
-
+				{/*
 				<a href='http://www.slhwremote.com' target="_blank" className='link link1'><Icon type="arrow-right" /> 双良云监控系统</a>
 				<a href='http://www.bdp.cn' className='link link2' target="_blank"><Icon type="arrow-right" /> 能耗管理平台</a>
 				<a href='http://www.dvr163.com' className='link link3' target="_blank"><Icon type="arrow-right" /> 视频监控系统</a>
 				<a href='http://61.177.125.162:9000' className='link link4' target="_blank"><Icon type="arrow-right" /> ESM智慧运维平台</a>
-
+				*/}
 				<div className='infoDiv' style={{'left':this.state.left+'px','top':this.state.top+'px','opacity':this.state.opacity,'display':this.state.opacity===0?'none':'inline-block'}}>
 					<div className='loading' style={{'display':this.state.loading?'inline-block':'none'}}>
 							<Icon type="loading" className='icon'/>
 					</div>
 					<div className='infoHeader'>
-						<div className='infoCircle' style={{'background':this.state.curMechine.NAME_==='空调'?'#fb5959':'#fffd38'}}></div> {this.state.curMechine.NAME_}
+						<div className='infoCircle' style={{'background':this.state.curMechine.name==='空调'?'#fb5959':'#fffd38'}}></div> {this.state.curMechine.name}
 
 						<Icon type="close" className='closeInfo' onClick={this.closeInfo}/>
 					</div>
 					<div className='infoLine lineGrey'>
 						<div className='infoLineLeft'>设备编号</div>
-						<div className='infoLineRight'>{this.state.curMechine.SBBH}</div>
+						<div className='infoLineRight'>{this.state.curMechine.sbbh}</div>
 					</div>
 					<div className='infoLine ' >
 						<div className='infoLineLeft'>设备型号</div>
-						<div className='infoLineRight'>{this.state.curMechine.SBXH}</div>
+						<div className='infoLineRight'>{this.state.curMechine.sbxh}</div>
 					</div>
 					<div className='infoLine lineGrey'>
 						<div className='infoLineLeft'>发货日期</div>
-						<div className='infoLineRight'>{this.state.curMechine.FHRQ}</div>
+						<div className='infoLineRight'>{this.state.curMechine.fhrq}</div>
 					</div>
 					<div className='infoLine '>
 						<div className='infoLineLeft'>设备状态</div>
@@ -1722,23 +1363,23 @@ class Main extends React.Component{
 					</div>
 					<div className='infoLine lineGrey'>
 						<div className='infoLineLeft'>制作公司</div>
-						<div className='infoLineRight' title={this.state.curMechine.HTKH}>{this.state.curMechine.HTKH}</div>
+						<div className='infoLineRight' title={this.state.curMechine.htkh}>{this.state.curMechine.htkh}</div>
 					</div>
 					<div className='infoLine '>
 						<div className='infoLineLeft'>分公司办</div>
-						<div className='infoLineRight' >{this.state.curMechine.FGSB}</div>
+						<div className='infoLineRight' >{this.state.curMechine.fgsb}</div>
 					</div>
 					<div className='infoLine lineGrey'>
 						<div className='infoLineLeft'>用户</div>
-						<div className='infoLineRight' title={this.state.curMechine.YH}>{this.state.curMechine.YH}</div>
+						<div className='infoLineRight' title={this.state.curMechine.yh}>{this.state.curMechine.yh}</div>
 					</div>
 					<div className='infoLine ' >
 						<div className='infoLineLeft'>地址</div>
-						<div className='infoLineRight' title={this.state.curMechine.DZ}>{this.state.curMechine.DZ}</div>
+						<div className='infoLineRight' title={this.state.curMechine.dz}>{this.state.curMechine.dz}</div>
 					</div>
 				</div>
-
-				
+	
+				<InfoModal visible={this.state.visible} close={this.closeModal.bind(this)} data={this.state.curData}/>	
 			</div>
 		)
 	}
